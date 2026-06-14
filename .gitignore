@@ -152,8 +152,3 @@ dist/
 .env.production
 # macOS
 .DS_Store
-
-# lock files
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
