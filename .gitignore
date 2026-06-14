@@ -152,3 +152,5 @@ dist/
 .env.production
 # macOS
 .DS_Store
+
+.lighthouseci

@@ -11,6 +11,8 @@ interface Props {
   availability: 'available' | 'limited' | 'contact';
   slug: string;
   featured?: boolean;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
 }
 
 const {
@@ -22,6 +24,8 @@ const {
   availability,
   slug,
   featured = false,
+  loading = 'lazy',
+  fetchpriority = 'auto',
 } = Astro.props;
 
 const availabilityLabel = {
@@ -44,7 +48,8 @@ const detailHref = `/fleet/${slug}`;
       alt={`${name} available for rent in the UAE`}
       widths={[400, 600, 900]}
       sizes="(max-width: 48rem) 100vw, 33vw"
-      loading="lazy"
+      loading={loading}
+      fetchpriority={fetchpriority}
       decoding="async"
       class="fleet-card__image"
     />
@@ -54,9 +59,9 @@ const detailHref = `/fleet/${slug}`;
   </a>
 
   <div class="fleet-card__body">
-    <h3 class="fleet-card__name">
+    <h2 class="fleet-card__name">
       <a href={detailHref}>{name}</a>
-    </h3>
+    </h2>
     <dl class="fleet-card__specs">
       {
         maxLoad && (

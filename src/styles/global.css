@@ -22,7 +22,7 @@
   /* --- Typography --- */
   --text-primary: #121212;
   --text-secondary: #4a4a4a;
-  --text-muted: #6b7280;
+  --text-muted: #595959;
   --text-inverse: #ffffff;
   --text-on-accent: #121212;
 
@@ -64,7 +64,7 @@
 
   --text-primary: #f0f0f0;
   --text-secondary: #a0a0a0;
-  --text-muted: #6b7280;
+  --text-muted: #999999;
   --text-inverse: #121212;
   --text-on-accent: #121212;
 

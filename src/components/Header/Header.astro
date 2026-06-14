@@ -49,7 +49,12 @@ function isActive(href: string) {
 
     <div class="site-header__actions">
       <ThemeToggle />
-      <a href={`tel:${contact.phoneE164}`} class="btn btn--primary site-header__cta" data-phone-cta>
+      <a
+        href={`tel:${contact.phoneE164}`}
+        class="btn btn--primary site-header__cta"
+        data-phone-cta
+        aria-label={`Call Lail O Nahar at ${contact.phoneDisplay}`}
+      >
         <span aria-hidden="true">📞</span>
         <span class="site-header__cta-text">{contact.phoneDisplay}</span>
       </a>
