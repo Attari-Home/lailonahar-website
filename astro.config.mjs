@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://lailonahar.ae',
+    site: 'https://lail-o-nahar.pages.dev',
     trailingSlash: 'ignore',
     prefetch: {
         prefetchAll: true,

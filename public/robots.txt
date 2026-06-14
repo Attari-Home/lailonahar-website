@@ -3,4 +3,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lailonahar.ae/sitemap-index.xml
+Sitemap: https://lail-o-nahar.pages.dev/sitemap-index.xml

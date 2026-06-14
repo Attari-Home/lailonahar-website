@@ -760,16 +760,16 @@ Every page MUST include:
 <meta name="description" content="Rent cranes and man-cranes across UAE. 24/7 service in Dubai, Sharjah, Ajman & Abu Dhabi. Get a free quote from Lail O Nahar Machinery Rentals today." />
 
 <!-- Canonical -->
-<link rel="canonical" href="https://lailonahar.ae/fleet/cranes" />
+<link rel="canonical" href="https://lail-o-nahar.pages.dev/fleet/cranes" />
 
 <!-- Hreflang (Phase 2, when Arabic added) -->
-<link rel="alternate" hreflang="en" href="https://lailonahar.ae/fleet" />
-<link rel="alternate" hreflang="ar" href="https://lailonahar.ae/ar/fleet" />
+<link rel="alternate" hreflang="en" href="https://lail-o-nahar.pages.dev/fleet" />
+<link rel="alternate" hreflang="ar" href="https://lail-o-nahar.pages.dev/ar/fleet" />
 
 <!-- Open Graph -->
 <meta property="og:title" content="..." />
 <meta property="og:description" content="..." />
-<meta property="og:image" content="https://lailonahar.ae/og/og-default.jpg" />
+<meta property="og:image" content="https://lail-o-nahar.pages.dev/og/og-default.jpg" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_AE" />
 
@@ -785,7 +785,7 @@ Every page MUST include:
   "@type": "LocalBusiness",
   "name": "Lail O Nahar Machinery Rentals",
   "description": "Crane and aerial work platform rentals across the UAE",
-  "url": "https://lailonahar.ae",
+  "url": "https://lail-o-nahar.pages.dev",
   "telephone": "+971-XX-XXX-XXXX",
   "openingHours": "Mo-Su 00:00-24:00",
   "priceRange": "$$",
@@ -814,7 +814,7 @@ Every page MUST include:
   "@type": "Product",
   "name": "50 Ton Mobile Crane Rental",
   "description": "...",
-  "image": "https://lailonahar.ae/assets/fleet/50t-crane.webp",
+  "image": "https://lail-o-nahar.pages.dev/assets/fleet/50t-crane.webp",
   "offers": {
     "@type": "Offer",
     "availability": "https://schema.org/InStock",
@@ -1017,7 +1017,7 @@ dist/
 
 # Environment variables (set in Cloudflare dashboard)
 WEB3FORMS_KEY=xxxx
-SITE_URL=https://lailonahar.ae
+SITE_URL=https://lail-o-nahar.pages.dev
 ```
 
 **Why Cloudflare Pages:**
@@ -1057,7 +1057,7 @@ jobs:
 
 | Branch | Environment | URL |
 |---|---|---|
-| `main` | Production | `https://lailonahar.ae` |
+| `main` | Production | `https://lail-o-nahar.pages.dev` |
 | `develop` | Staging | `https://staging.lailonahar.ae` |
 | `feature/*` | Preview | `https://<branch>.lailonahar.pages.dev` |
 

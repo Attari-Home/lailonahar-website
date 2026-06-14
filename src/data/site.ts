@@ -7,7 +7,7 @@ export const site = {
     name: 'Lail O Nahar Machinery Rentals',
     shortName: 'Lail O Nahar',
     nameAr: 'ليل و نهار',
-    url: 'https://lailonahar.ae',
+    url: 'https://lail-o-nahar.pages.dev',
     description:
         'Rent cranes and man-cranes across the UAE. 24/7 service in Dubai, Sharjah, Ajman & Abu Dhabi. Get a free quote from Lail O Nahar Machinery Rentals today.',
     locale: 'en_AE',
