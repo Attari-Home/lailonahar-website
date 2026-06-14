@@ -1,0 +1,108 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FleetCard from '@components/FleetCard/FleetCard.astro';
+
+interface Props {
+  items: CollectionEntry<'equipment'>[];
+  showFilters?: boolean;
+}
+
+const { items, showFilters = true } = Astro.props;
+
+const filters = [
+  { label: 'All', value: 'all' },
+  { label: 'Cranes', value: 'crane' },
+  { label: 'Man-Cranes', value: 'man-crane' },
+  { label: 'Available Now', value: 'available' },
+];
+---
+
+{
+  showFilters && (
+    <div class="fleet-filters" role="group" aria-label="Filter fleet">
+      {filters.map((f, i) => (
+        <button
+          type="button"
+          class:list={['fleet-filters__btn', { 'is-active': i === 0 }]}
+          data-filter={f.value}
+          aria-pressed={i === 0 ? 'true' : 'false'}
+        >
+          {f.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+<div class="fleet-grid" data-fleet-grid>
+  {
+    items.map((item) => (
+      <FleetCard
+        name={item.data.name}
+        category={item.data.category}
+        image={item.data.mainImage}
+        maxLoad={item.data.specs.maxLoad}
+        maxHeight={item.data.specs.maxHeight}
+        availability={item.data.availability}
+        slug={item.data.slug}
+        featured={item.data.featured}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .fleet-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+  }
+
+  .fleet-filters__btn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-default);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .fleet-filters__btn:hover {
+    border-color: var(--border-accent);
+  }
+
+  .fleet-filters__btn.is-active {
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+    border-color: var(--accent-primary);
+  }
+
+  .fleet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+
+  .fleet-grid > [hidden] {
+    display: none;
+  }
+
+  @media (max-width: 64rem) {
+    .fleet-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .fleet-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

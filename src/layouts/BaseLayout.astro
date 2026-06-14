@@ -1,0 +1,136 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import SEO from '@components/SEO/SEO.astro';
+import Header from '@components/Header/Header.astro';
+import Footer from '@components/Footer/Footer.astro';
+import ProgressBar from '@components/ProgressBar/ProgressBar.astro';
+import WhatsAppWidget from '@components/WhatsApp/WhatsAppWidget.astro';
+import MobileCtaBar from '@components/MobileCtaBar/MobileCtaBar.astro';
+import '@styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalPath?: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  lang?: string;
+  dir?: 'ltr' | 'rtl';
+  hideWhatsApp?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  canonicalPath,
+  schema,
+  noindex,
+  lang = 'en',
+  dir = 'ltr',
+  hideWhatsApp = false,
+} = Astro.props;
+
+const cfBeacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+---
+
+<!doctype html>
+<html lang={lang} dir={dir} data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#FFCC00" />
+
+    {/* Anti-flash theme init — MUST run synchronously before paint */}
+    <script is:inline>
+      (function () {
+        const KEY = 'lon-theme';
+        const root = document.documentElement;
+        const saved = localStorage.getItem(KEY);
+        const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        root.setAttribute('data-theme', saved || system);
+      })();
+    </script>
+
+    {/* Fonts — preconnect then load */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap"
+    />
+
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      canonicalPath={canonicalPath}
+      schema={schema}
+      noindex={noindex}
+    />
+
+    <ClientRouter />
+
+    {
+      cfBeacon && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${cfBeacon}"}`}
+        />
+      )
+    }
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <ProgressBar />
+    <Header />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+
+    {!hideWhatsApp && <WhatsAppWidget />}
+    <MobileCtaBar />
+
+    {/* Global interaction scripts (loaded once, re-init on page-load) */}
+    <script is:inline src="/scripts/filter.js"></script>
+    <script is:inline src="/scripts/form.js"></script>
+
+    {/* Theme toggle handler — re-bound after each view transition */}
+    <script>
+      const KEY = 'lon-theme';
+      function applyTheme(theme: string) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(KEY, theme);
+        document.querySelectorAll('#theme-toggle').forEach((btn) => {
+          btn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
+        });
+      }
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      }
+      // Expose for inline onclick + bind via delegation (survives transitions).
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('#theme-toggle')) toggleTheme();
+      });
+      // React to OS preference changes when the user hasn't chosen explicitly.
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem(KEY)) {
+          document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+      });
+    </script>
+  </body>
+</html>

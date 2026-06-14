@@ -1,0 +1,129 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Feature {
+  icon: string;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  features?: Feature[];
+}
+
+const {
+  eyebrow = 'Why Lail O Nahar',
+  title = 'Built for demanding UAE projects',
+  features = [
+    {
+      icon: 'ph:clock-countdown',
+      title: '24/7 Availability',
+      text: 'Round-the-clock dispatch and support so your project never waits for equipment.',
+    },
+    {
+      icon: 'ph:shield-check',
+      title: 'Safety Certified',
+      text: 'Fully inspected machines and trained, certified operators on every job.',
+    },
+    {
+      icon: 'ph:map-pin-line',
+      title: 'UAE-Wide Coverage',
+      text: 'Fast mobilisation across Dubai, Sharjah, Ajman and Abu Dhabi.',
+    },
+    {
+      icon: 'ph:wrench',
+      title: 'Well-Maintained Fleet',
+      text: 'Modern, regularly serviced cranes and lifts that minimise downtime.',
+    },
+    {
+      icon: 'ph:currency-circle-dollar',
+      title: 'Transparent Pricing',
+      text: 'Clear, competitive quotes with no hidden charges or surprises.',
+    },
+    {
+      icon: 'ph:headset',
+      title: 'Responsive Support',
+      text: 'A dedicated team that answers fast and keeps your operation moving.',
+    },
+  ],
+} = Astro.props;
+---
+
+<section class="features section">
+  <div class="container-content">
+    <div class="features__head">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="features__title">{title}</h2>
+    </div>
+    <ul class="features__grid">
+      {
+        features.map((f) => (
+          <li class="features__item surface-card">
+            <span class="features__icon">
+              <Icon name={f.icon} />
+            </span>
+            <h3 class="features__item-title">{f.title}</h3>
+            <p class="features__item-text">{f.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .features__head {
+    text-align: center;
+    margin-block-end: var(--space-12);
+  }
+
+  .features__title {
+    margin-block-start: var(--space-3);
+    font-size: var(--text-4xl);
+  }
+
+  .features__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+
+  .features__item {
+    padding: var(--space-8);
+  }
+
+  .features__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 52px;
+    block-size: 52px;
+    border-radius: var(--radius-md);
+    background: var(--accent-primary-subtle);
+    color: var(--accent-primary-hover);
+    font-size: 1.6rem;
+    margin-block-end: var(--space-4);
+  }
+
+  .features__item-title {
+    font-size: var(--text-xl);
+    margin-block-end: var(--space-2);
+  }
+
+  @media (max-width: 64rem) {
+    .features__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .features__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

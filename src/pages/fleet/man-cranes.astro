@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/PageHeader/PageHeader.astro';
+import FleetGrid from '@components/FleetGrid/FleetGrid.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+
+const manCranes = (await getCollection('equipment'))
+  .filter((e) => e.data.category === 'man-crane')
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+---
+
+<BaseLayout
+  title="Man-Crane & Boom Lift Rentals in the UAE"
+  description="Rent scissor lifts and boom lifts (man-cranes) across the UAE for elevated access and aerial work. Available 24/7 in Dubai, Sharjah, Ajman & Abu Dhabi."
+>
+  <PageHeader
+    eyebrow="Man-Cranes"
+    title="Scissor Lifts & Boom Lifts"
+    text="Safe elevated access from 12m to 45m for maintenance, MEP, facade and installation work — electric, diesel and hybrid options available."
+  />
+
+  <section class="section">
+    <div class="container-content">
+      <FleetGrid items={manCranes} showFilters={false} />
+    </div>
+  </section>
+
+  <CtaBand title="Need aerial access equipment?" />
+</BaseLayout>

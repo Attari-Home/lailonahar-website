@@ -1,0 +1,72 @@
+---
+import { stats } from '@data/site';
+---
+
+<section class="stats-bar" id="trust" aria-label="Company highlights">
+  <div class="container-content stats-bar__grid">
+    {
+      stats.map((stat) => (
+        <div class="stats-bar__item">
+          <span class="stats-bar__value">{stat.value}</span>
+          <span class="stats-bar__label">{stat.label}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .stats-bar {
+    background: var(--bg-surface);
+    border-block: 1px solid var(--border-default);
+  }
+
+  .stats-bar__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+    padding-block: var(--space-12);
+  }
+
+  .stats-bar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+    position: relative;
+  }
+
+  .stats-bar__item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: calc(var(--space-6) * -0.5);
+    inset-block: 10%;
+    inline-size: 1px;
+    background: var(--border-default);
+  }
+
+  .stats-bar__value {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--accent-primary);
+    line-height: 1;
+  }
+
+  .stats-bar__label {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  @media (max-width: 48rem) {
+    .stats-bar__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-8);
+    }
+    .stats-bar__item:not(:last-child)::after {
+      display: none;
+    }
+  }
+</style>

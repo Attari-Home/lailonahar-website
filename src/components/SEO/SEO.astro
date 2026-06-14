@@ -1,0 +1,50 @@
+---
+import { site } from '@data/site';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalPath?: string;
+  /** Optional JSON-LD structured data object (or array of objects). */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  image = site.defaultOgImage,
+  canonicalPath = Astro.url.pathname,
+  schema,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(canonicalPath, site.url).href;
+const ogImage = new URL(image, site.url).href;
+const fullTitle = title.includes(site.shortName) ? title : `${title} | ${site.shortName}`;
+---
+
+<!-- Primary meta -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={site.locale} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- JSON-LD -->
+{schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}

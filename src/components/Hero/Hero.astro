@@ -1,0 +1,215 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { contact, emirates } from '@data/site';
+
+interface Props {
+  image: ImageMetadata;
+  video?: string; // optional path under /public, e.g. "/videos/crane-hero.mp4"
+  videoWebm?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+}
+
+const {
+  image,
+  video,
+  videoWebm,
+  eyebrow = 'Heavy Lifting, Done Right',
+  title,
+  subtitle,
+} = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero__media">
+    {
+      video ? (
+        <video
+          class="hero__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster={image.src}
+        >
+          {videoWebm && <source src={videoWebm} type="video/webm" />}
+          <source src={video} type="video/mp4" />
+        </video>
+      ) : (
+        <Image
+          src={image}
+          alt="Lail O Nahar crane fleet operating across the UAE"
+          widths={[768, 1280, 1920]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="hero__image"
+        />
+      )
+    }
+    <div class="hero__overlay"></div>
+  </div>
+
+  <div class="container-content hero__content">
+    <div class="hero__panel">
+      <div class="hero__badge-row">
+        <span class="eyebrow hero__eyebrow">{eyebrow}</span>
+        <span class="badge hero__badge">24/7 Service</span>
+      </div>
+      <h1 class="hero__title">{title}</h1>
+      {subtitle && <p class="hero__subtitle">{subtitle}</p>}
+
+      <div class="hero__actions">
+        <a href="/contact" class="btn btn--primary">Get a Free Quote</a>
+        <a href="/fleet" class="btn btn--ghost-inverse">View Our Fleet</a>
+      </div>
+
+      <p class="hero__locations">
+        Serving {emirates.join(' • ')}
+      </p>
+    </div>
+
+    <a href={`tel:${contact.phoneE164}`} class="hero__phone">
+      📞 {contact.phoneDisplay}
+    </a>
+  </div>
+
+  <a href="#trust" class="hero__scroll" aria-label="Scroll to content">
+    <svg
+      viewBox="0 0 24 24"
+      width="28"
+      height="28"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path d="M6 9l6 6 6-6"></path>
+    </svg>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-block-size: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero__image,
+  .hero__video {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.55) 45%,
+      rgba(0, 0, 0, 0.35) 100%
+    );
+  }
+
+  :global([data-theme='dark']) .hero__overlay {
+    background: linear-gradient(
+      105deg,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.7) 45%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-block: var(--space-24) var(--space-16);
+  }
+
+  .hero__panel {
+    max-inline-size: 720px;
+  }
+
+  .hero__badge-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-block-end: var(--space-4);
+  }
+
+  .hero__eyebrow {
+    color: var(--accent-primary);
+  }
+
+  .hero__badge {
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+    font-weight: 700;
+  }
+
+  .hero__title {
+    color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+  .hero__subtitle {
+    margin-block-start: var(--space-6);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    max-inline-size: 56ch;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+  }
+
+  .hero__locations {
+    margin-block-start: var(--space-6);
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .hero__phone {
+    display: none;
+  }
+
+  .hero__scroll {
+    position: absolute;
+    inset-block-end: var(--space-6);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    animation: hero-bounce 2s infinite;
+  }
+
+  @keyframes hero-bounce {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(8px);
+    }
+  }
+</style>

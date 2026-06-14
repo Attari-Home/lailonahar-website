@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/PageHeader/PageHeader.astro';
+import FleetGrid from '@components/FleetGrid/FleetGrid.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+
+const equipment = (await getCollection('equipment')).sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder
+);
+---
+
+<BaseLayout
+  title="Fleet — Cranes & Man-Cranes for Rent in the UAE"
+  description="Browse the full Lail O Nahar fleet of mobile cranes, crawler cranes, scissor lifts and boom lifts available for rent across Dubai, Sharjah, Ajman and Abu Dhabi."
+>
+  <PageHeader
+    eyebrow="Our Fleet"
+    title="Cranes & Aerial Work Platforms"
+    text="From compact 25-ton mobile cranes to 45m hybrid boom lifts, our well-maintained fleet covers every UAE lifting and access requirement. Filter by category or availability below."
+  />
+
+  <section class="section">
+    <div class="container-content">
+      <FleetGrid items={equipment} />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

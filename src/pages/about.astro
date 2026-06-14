@@ -1,0 +1,130 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/PageHeader/PageHeader.astro';
+import Features from '@components/Features/Features.astro';
+import StatsBar from '@components/StatsBar/StatsBar.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+import teamPhoto from '@assets/about/team-photo.jpg';
+import safetyPhoto from '@assets/about/safety.jpg';
+---
+
+<BaseLayout
+  title="About Lail O Nahar Machinery Rentals"
+  description="Learn about Lail O Nahar Machinery Rentals — a trusted UAE crane and man-crane rental provider with 15+ years of experience, certified operators and a safety-first culture."
+>
+  <PageHeader
+    eyebrow="About Us"
+    title="Heavy lifting partners you can rely on"
+    text="For over 15 years, Lail O Nahar has supplied cranes and aerial work platforms to contractors across the UAE — built on safety, reliability and round-the-clock service."
+  />
+
+  <section class="section">
+    <div class="container-content about__split">
+      <div class="about__media">
+        <Image
+          src={teamPhoto}
+          alt="The Lail O Nahar operations team"
+          widths={[480, 768]}
+          sizes="(max-width: 64rem) 100vw, 50vw"
+          class="about__image"
+        />
+      </div>
+      <div class="about__text">
+        <span class="eyebrow">Our Story</span>
+        <h2>Trusted across Dubai, Sharjah, Ajman &amp; Abu Dhabi</h2>
+        <p>
+          What began as a small fleet has grown into one of the region's dependable machinery rental
+          partners. We combine modern, well-maintained equipment with experienced, certified
+          operators to keep your projects safe and on schedule.
+        </p>
+        <p>
+          From single-day lifts to long-term industrial contracts, our team delivers responsive
+          service and transparent pricing — every hour of every day.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <StatsBar />
+
+  <section class="section">
+    <div class="container-content about__split about__split--reverse">
+      <div class="about__media">
+        <Image
+          src={safetyPhoto}
+          alt="Lail O Nahar safety and certification standards on site"
+          widths={[480, 768]}
+          sizes="(max-width: 64rem) 100vw, 50vw"
+          class="about__image"
+        />
+      </div>
+      <div class="about__text">
+        <span class="eyebrow">Safety First</span>
+        <h2>Certified equipment, certified people</h2>
+        <p>
+          Safety is non-negotiable. Every machine in our fleet is regularly inspected and maintained
+          to UAE regulatory standards, and our operators hold the certifications required for
+          compliant, incident-free lifting.
+        </p>
+        <ul class="about__list">
+          <li>Third-party inspected &amp; load-tested equipment</li>
+          <li>Certified, experienced crane &amp; lift operators</li>
+          <li>Full method statements &amp; risk assessments on request</li>
+          <li>Comprehensive insurance coverage</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <Features eyebrow="Our Promise" title="What sets us apart" />
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .about__split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .about__media {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .about__image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .about__text h2 {
+    font-size: var(--text-3xl);
+    margin-block: var(--space-3) var(--space-4);
+  }
+
+  .about__text p {
+    margin-block-end: var(--space-4);
+  }
+
+  .about__list {
+    margin-block-start: var(--space-4);
+    padding-inline-start: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 64rem) {
+    .about__split {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    .about__split--reverse .about__media {
+      order: -1;
+    }
+  }
+</style>

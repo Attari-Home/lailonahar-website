@@ -1,0 +1,6 @@
+# The default behavior, which overrides this file's directives, is to
+# allow all crawlers full access. This file is intentionally permissive.
+User-agent: *
+Allow: /
+
+Sitemap: https://lailonahar.ae/sitemap-index.xml

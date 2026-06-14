@@ -1,0 +1,256 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+import { site, contact, whatsappLink } from '@data/site';
+
+export async function getStaticPaths() {
+  const equipment = await getCollection('equipment');
+  return equipment.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+const categoryLabel = data.category === 'crane' ? 'Crane' : 'Man-Crane';
+const availabilityLabel = {
+  available: 'Available Now',
+  limited: 'Limited Availability',
+  contact: 'Enquire for Availability',
+} as const;
+
+const enquireMsg = `Hello Lail O Nahar! I'm interested in renting the ${data.name}. Please send me a quote and availability.`;
+
+const specRows = [
+  data.specs.maxLoad && { label: 'Max Load', value: data.specs.maxLoad },
+  data.specs.maxHeight && { label: 'Max Height', value: data.specs.maxHeight },
+  data.specs.boomLength && { label: 'Boom Length', value: data.specs.boomLength },
+  data.specs.powerSource && { label: 'Power Source', value: data.specs.powerSource },
+  data.specs.workArea && { label: 'Work Area', value: data.specs.workArea },
+].filter(Boolean) as { label: string; value: string }[];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${data.name} Rental`,
+  description: data.description,
+  image: new URL(data.mainImage.src, site.url).href,
+  category: categoryLabel,
+  offers: {
+    '@type': 'Offer',
+    availability:
+      data.availability === 'available'
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/LimitedAvailability',
+    priceCurrency: 'AED',
+    seller: { '@type': 'LocalBusiness', name: site.name },
+  },
+};
+---
+
+<BaseLayout title={`${data.name} Rental in the UAE`} description={data.description} schema={schema}>
+  <article class="detail">
+    <div class="container-content detail__grid">
+      <div class="detail__media">
+        <Image
+          src={data.mainImage}
+          alt={`${data.name} available for rent in the UAE`}
+          widths={[480, 768, 1024]}
+          sizes="(max-width: 64rem) 100vw, 50vw"
+          loading="eager"
+          fetchpriority="high"
+          class="detail__image"
+        />
+      </div>
+
+      <div class="detail__info">
+        <nav class="detail__breadcrumb" aria-label="Breadcrumb">
+          <a href="/fleet">Fleet</a>
+          <span aria-hidden="true">/</span>
+          <a href={data.category === 'crane' ? '/fleet/cranes' : '/fleet/man-cranes'}>
+            {categoryLabel}s
+          </a>
+        </nav>
+
+        <h1 class="detail__title">{data.name}</h1>
+        <span class:list={['badge', `badge--${data.availability}`]}>
+          {availabilityLabel[data.availability]}
+        </span>
+
+        {
+          specRows.length > 0 && (
+            <dl class="detail__specs">
+              {specRows.map((row) => (
+                <div class="detail__spec">
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )
+        }
+
+        <div class="detail__prose">
+          <Content />
+        </div>
+
+        {
+          data.useCases.length > 0 && (
+            <div class="detail__usecases">
+              <h2>Ideal for</h2>
+              <ul>
+                {data.useCases.map((u) => (
+                  <li>{u}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <div class="detail__actions">
+          <a
+            href={whatsappLink(enquireMsg)}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--primary"
+          >
+            💬 Enquire About This Equipment
+          </a>
+          <a href={`tel:${contact.phoneE164}`} class="btn btn--secondary">📞 Call to Book</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .detail {
+    padding-block: calc(72px + var(--space-12)) var(--space-16);
+  }
+
+  .detail__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .detail__media {
+    position: sticky;
+    inset-block-start: 96px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .detail__image {
+    inline-size: 100%;
+    block-size: auto;
+    object-fit: cover;
+  }
+
+  .detail__breadcrumb {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-block-end: var(--space-4);
+  }
+
+  .detail__breadcrumb a:hover {
+    color: var(--accent-primary-hover);
+  }
+
+  .detail__title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin-block-end: var(--space-4);
+  }
+
+  .detail__specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-block: var(--space-8);
+    padding: var(--space-6);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+  }
+
+  .detail__spec dt {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .detail__spec dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    text-transform: capitalize;
+  }
+
+  .detail__prose {
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .detail__prose :global(p) {
+    margin-block: var(--space-4);
+  }
+
+  .detail__usecases {
+    margin-block-start: var(--space-8);
+  }
+
+  .detail__usecases h2 {
+    font-size: var(--text-xl);
+    margin-block-end: var(--space-3);
+  }
+
+  .detail__usecases ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .detail__usecases li {
+    padding: var(--space-1) var(--space-4);
+    background: var(--accent-primary-subtle);
+    color: var(--accent-primary-hover);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .detail__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+  }
+
+  @media (max-width: 64rem) {
+    .detail__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    .detail__media {
+      position: static;
+    }
+  }
+</style>

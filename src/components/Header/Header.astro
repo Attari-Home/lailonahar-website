@@ -1,0 +1,308 @@
+---
+import { navLinks, contact, site } from '@data/site';
+import ThemeToggle from '@components/ThemeToggle/ThemeToggle.astro';
+import Logo from '@components/Logo/Logo.astro';
+
+const currentPath = Astro.url.pathname;
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header" data-header transition:persist>
+  <div class="container-content site-header__inner">
+    <a href="/" class="site-header__brand" aria-label={`${site.name} — home`}>
+      <Logo class="site-header__logo" />
+      <span class="site-header__brand-text">
+        <span class="site-header__brand-name">Lail O Nahar</span>
+        <span class="site-header__brand-sub" lang="ar" dir="rtl">ليل و نهار</span>
+      </span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Primary">
+      <ul class="site-header__links">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class:list={['site-header__link', { 'is-active': isActive(link.href) }]}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <ThemeToggle />
+      <a href={`tel:${contact.phoneE164}`} class="btn btn--primary site-header__cta" data-phone-cta>
+        <span aria-hidden="true">📞</span>
+        <span class="site-header__cta-text">{contact.phoneDisplay}</span>
+      </a>
+      <button
+        class="site-header__burger"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-burger
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile overlay menu -->
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+    <nav aria-label="Mobile">
+      <ul>
+        {
+          navLinks.map((link) => (
+            <li>
+              <a href={link.href} class="mobile-menu__link">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a href={`tel:${contact.phoneE164}`} class="btn btn--primary mobile-menu__cta">
+      📞 {contact.phoneDisplay}
+    </a>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    const header = document.querySelector('[data-header]');
+    const burger = document.querySelector('[data-burger]');
+    const menu = document.querySelector('[data-mobile-menu]') as HTMLElement | null;
+    if (!header) return;
+
+    // Scroll state → glassmorphism
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 60);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Mobile menu toggle
+    if (burger && menu) {
+      const close = () => {
+        menu.hidden = true;
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Open menu');
+        document.body.style.overflow = '';
+      };
+      const open = () => {
+        menu.hidden = false;
+        burger.setAttribute('aria-expanded', 'true');
+        burger.setAttribute('aria-label', 'Close menu');
+        document.body.style.overflow = 'hidden';
+      };
+      burger.addEventListener('click', () => {
+        menu.hidden ? open() : close();
+      });
+      menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !menu.hidden) close();
+      });
+    }
+  }
+
+  document.addEventListener('astro:page-load', initHeader);
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 100;
+    transition:
+      background-color var(--transition-base),
+      backdrop-filter var(--transition-base),
+      box-shadow var(--transition-base);
+  }
+
+  .site-header.is-scrolled {
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    block-size: 72px;
+  }
+
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: #fff;
+  }
+
+  .site-header__logo {
+    inline-size: 40px;
+    block-size: 40px;
+    min-width: 63px;
+  }
+
+  .site-header__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    min-width: 125px;
+    align-items: center;
+  }
+
+  .site-header__brand-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-lg);
+    color: #fff;
+  }
+
+  .site-header__brand-sub {
+    font-size: var(--text-sm);
+    color: var(--accent-primary);
+  }
+
+  .site-header__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-header__link {
+    position: relative;
+    color: #fff;
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding-block: var(--space-2);
+    transition: color var(--transition-fast);
+  }
+
+  .site-header__link::after {
+    content: '';
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: 0;
+    block-size: 2px;
+    background: var(--accent-primary);
+    transition: inline-size var(--transition-base);
+  }
+
+  .site-header__link:hover,
+  .site-header__link.is-active {
+    color: var(--accent-primary);
+  }
+
+  .site-header__link.is-active::after,
+  .site-header__link:hover::after {
+    inline-size: 100%;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .site-header__cta {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .site-header__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    inline-size: 40px;
+    block-size: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .site-header__burger span {
+    display: block;
+    block-size: 2px;
+    inline-size: 22px;
+    margin-inline: auto;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform var(--transition-fast);
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 72px 0 0 0;
+    background: var(--bg-nav);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    animation: slide-from-right var(--transition-base);
+  }
+
+  .mobile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .mobile-menu__link {
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-3xl);
+  }
+
+  .mobile-menu__link:hover {
+    color: var(--accent-primary);
+  }
+
+  @media (max-width: 64rem) {
+    .site-header__nav,
+    .site-header__cta-text {
+      display: none;
+    }
+    .site-header__cta {
+      padding: var(--space-2);
+    }
+    .site-header__burger {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 64.01rem) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>

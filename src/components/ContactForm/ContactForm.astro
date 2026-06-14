@@ -1,0 +1,230 @@
+---
+import { emirates } from '@data/site';
+
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? 'YOUR_WEB3FORMS_ACCESS_KEY';
+---
+
+<div class="contact-form-wrap">
+  <form
+    class="contact-form"
+    action="https://api.web3forms.com/submit"
+    method="POST"
+    data-contact-form
+    novalidate
+  >
+    <input type="hidden" name="access_key" value={accessKey} />
+    <input type="hidden" name="subject" value="New Lead — Lail O Nahar Website" />
+    <input type="hidden" name="from_name" value="Lail O Nahar Website" />
+    {/* Honeypot */}
+    <input
+      type="checkbox"
+      name="botcheck"
+      class="contact-form__hp"
+      style="display:none"
+      tabindex="-1"
+      autocomplete="off"
+    />
+
+    <div class="contact-form__row">
+      <div class="contact-form__field" data-field>
+        <label for="cf-name">Full Name <span aria-hidden="true">*</span></label>
+        <input id="cf-name" name="name" type="text" autocomplete="name" required />
+        <span class="contact-form__error" data-error></span>
+      </div>
+
+      <div class="contact-form__field" data-field>
+        <label for="cf-company">Company Name <span aria-hidden="true">*</span></label>
+        <input id="cf-company" name="company" type="text" autocomplete="organization" required />
+        <span class="contact-form__error" data-error></span>
+      </div>
+    </div>
+
+    <div class="contact-form__row">
+      <div class="contact-form__field" data-field>
+        <label for="cf-phone">Phone <span aria-hidden="true">*</span></label>
+        <input
+          id="cf-phone"
+          name="phone"
+          type="tel"
+          inputmode="tel"
+          placeholder="+971 50 123 4567"
+          autocomplete="tel"
+          data-phone
+          required
+        />
+        <span class="contact-form__error" data-error></span>
+      </div>
+
+      <div class="contact-form__field" data-field>
+        <label for="cf-email">Email</label>
+        <input id="cf-email" name="email" type="email" autocomplete="email" />
+        <span class="contact-form__error" data-error></span>
+      </div>
+    </div>
+
+    <div class="contact-form__row">
+      <div class="contact-form__field" data-field>
+        <label for="cf-emirate">Emirate <span aria-hidden="true">*</span></label>
+        <select id="cf-emirate" name="emirate" required>
+          <option value="" disabled selected>Select an emirate</option>
+          {emirates.map((e) => <option value={e}>{e}</option>)}
+          <option value="Other">Other</option>
+        </select>
+        <span class="contact-form__error" data-error></span>
+      </div>
+
+      <div class="contact-form__field" data-field>
+        <label for="cf-equipment">Equipment Needed <span aria-hidden="true">*</span></label>
+        <select id="cf-equipment" name="equipment" required>
+          <option value="" disabled selected>Select equipment</option>
+          <option value="Crane">Crane</option>
+          <option value="Man-Crane">Man-Crane</option>
+          <option value="Not Sure">Not Sure</option>
+        </select>
+        <span class="contact-form__error" data-error></span>
+      </div>
+    </div>
+
+    <div class="contact-form__field" data-field>
+      <label for="cf-duration">Project Duration</label>
+      <select id="cf-duration" name="duration">
+        <option value="" disabled selected>Select duration</option>
+        <option value="Daily">Daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Long-term">Long-term</option>
+      </select>
+    </div>
+
+    <div class="contact-form__field" data-field>
+      <label for="cf-message">Message / Notes</label>
+      <textarea id="cf-message" name="message" rows="4"></textarea>
+    </div>
+
+    <p class="contact-form__status" data-form-status role="status" aria-live="polite"></p>
+
+    <button type="submit" class="btn btn--primary contact-form__submit">Get My Free Quote</button>
+  </form>
+
+  <div class="contact-form__success" data-form-success hidden tabindex="-1" role="alert">
+    <div class="contact-form__check" aria-hidden="true">
+      <svg viewBox="0 0 52 52" width="56" height="56">
+        <circle cx="26" cy="26" r="24" fill="none" stroke="var(--color-success)" stroke-width="3"
+        ></circle>
+        <path
+          fill="none"
+          stroke="var(--color-success)"
+          stroke-width="4"
+          stroke-linecap="round"
+          d="M14 27l8 8 16-16"></path>
+      </svg>
+    </div>
+    <h3>Thank you — request received!</h3>
+    <p>
+      Our team will contact you shortly with a quote. For urgent enquiries, call or WhatsApp us.
+    </p>
+  </div>
+</div>
+
+<style>
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .contact-form__field label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+  }
+
+  .contact-form__field label span {
+    color: var(--color-error);
+  }
+
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    inline-size: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font: inherit;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .contact-form input:focus,
+  .contact-form select:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: var(--focus-ring);
+  }
+
+  .contact-form [aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  .contact-form__error {
+    color: var(--color-error);
+    font-size: var(--text-xs);
+    min-block-size: 1em;
+  }
+
+  .contact-form__status {
+    margin: 0;
+    color: var(--color-error);
+    font-size: var(--text-sm);
+  }
+
+  .contact-form__submit {
+    align-self: flex-start;
+  }
+
+  .contact-form__success {
+    text-align: center;
+    padding: var(--space-12) var(--space-6);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+  }
+
+  .contact-form__success h3 {
+    margin-block: var(--space-4) var(--space-2);
+  }
+
+  .contact-form__check svg path {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: check-draw 500ms ease-out forwards 200ms;
+  }
+
+  @keyframes check-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .contact-form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

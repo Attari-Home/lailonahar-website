@@ -1,0 +1,50 @@
+---
+// Thin top-of-viewport loading indicator tied to Astro view transitions.
+---
+
+<div class="progress-bar" data-progress aria-hidden="true"></div>
+
+<script>
+  function initProgressBar() {
+    const bar = document.querySelector('[data-progress]') as HTMLElement | null;
+    if (!bar) return;
+    let timer: number | undefined;
+
+    document.addEventListener('astro:before-preparation', () => {
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      bar.style.opacity = '1';
+      // Force reflow so the reset applies before animating.
+      void bar.offsetWidth;
+      bar.style.transition = 'width 2s cubic-bezier(0.1, 0.7, 0.1, 1)';
+      bar.style.width = '80%';
+    });
+
+    document.addEventListener('astro:page-load', () => {
+      bar.style.transition = 'width 200ms ease-out, opacity 300ms ease-out 150ms';
+      bar.style.width = '100%';
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        bar.style.opacity = '0';
+        bar.style.width = '0%';
+      }, 250);
+    });
+  }
+
+  initProgressBar();
+</script>
+
+<style>
+  .progress-bar {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 200;
+    block-size: 3px;
+    inline-size: 0;
+    background: var(--accent-primary);
+    box-shadow: 0 0 8px var(--accent-primary);
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>

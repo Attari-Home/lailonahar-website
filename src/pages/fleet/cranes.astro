@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/PageHeader/PageHeader.astro';
+import FleetGrid from '@components/FleetGrid/FleetGrid.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+
+const cranes = (await getCollection('equipment'))
+  .filter((e) => e.data.category === 'crane')
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+---
+
+<BaseLayout
+  title="Crane Rentals in Dubai & Sharjah"
+  description="Rent mobile and crawler cranes across the UAE. 24/7 service in Dubai, Sharjah, Ajman & Abu Dhabi. Get a free quote from Lail O Nahar Machinery Rentals today."
+>
+  <PageHeader
+    eyebrow="Cranes"
+    title="Mobile & Crawler Crane Rentals"
+    text="Reliable lifting capacity from 25 to 100 tons, with certified operators and 24/7 mobilisation across the Emirates."
+  />
+
+  <section class="section">
+    <div class="container-content">
+      <FleetGrid items={cranes} showFilters={false} />
+    </div>
+  </section>
+
+  <CtaBand title="Need a crane on site fast?" />
+</BaseLayout>

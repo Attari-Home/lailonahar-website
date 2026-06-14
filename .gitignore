@@ -141,3 +141,19 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ===== Astro =====
+# build output
+dist/
+# generated types
+.astro/
+# environment
+.env
+.env.production
+# macOS
+.DS_Store
+
+# lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

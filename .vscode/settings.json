@@ -1,0 +1,17 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[astro]": {
+        "editor.defaultFormatter": "astro-build.astro-vscode"
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "tailwindCSS.experimental.configFile": "src/styles/global.css",
+    "css.validate": false,
+    "files.exclude": {
+        "**/.astro": true,
+        "**/dist": true,
+        "**/node_modules": true
+    }
+}

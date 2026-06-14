@@ -1,0 +1,36 @@
+{
+    "name": "lail-o-nahar",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "Lail O Nahar Machinery Rentals — ultra-fast static website for crane & man-crane rentals across the UAE.",
+    "license": "MIT",
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro check && astro build",
+        "preview": "astro preview",
+        "astro": "astro",
+        "check": "astro check",
+        "format": "prettier --write \"src/**/*.{astro,ts,js,css,md,mdx}\"",
+        "lint": "prettier --check \"src/**/*.{astro,ts,js,css,md,mdx}\""
+    },
+    "dependencies": {
+        "@astrojs/mdx": "^4.2.6",
+        "@astrojs/sitemap": "^3.4.1",
+        "@iconify-json/ph": "^1.2.2",
+        "@tailwindcss/vite": "^4.1.10",
+        "astro": "^5.9.3",
+        "astro-icon": "^1.1.5",
+        "sharp": "^0.34.2",
+        "tailwindcss": "^4.1.10"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.4",
+        "prettier": "^3.5.3",
+        "prettier-plugin-astro": "^0.14.1",
+        "typescript": "^5.8.3"
+    }
+}

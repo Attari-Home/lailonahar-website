@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Hero from '@components/Hero/Hero.astro';
+import StatsBar from '@components/StatsBar/StatsBar.astro';
+import FleetGrid from '@components/FleetGrid/FleetGrid.astro';
+import Features from '@components/Features/Features.astro';
+import Testimonials from '@components/Testimonials/Testimonials.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+import heroImage from '@assets/hero/hero.jpg';
+import { site, contact, emirates } from '@data/site';
+
+const equipment = await getCollection('equipment');
+const featured = equipment
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .filter((e) => e.data.featured || ['available'].includes(e.data.availability))
+  .slice(0, 6);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.name,
+  description: 'Crane and aerial work platform rentals across the UAE',
+  url: site.url,
+  telephone: contact.phoneE164,
+  email: contact.email,
+  openingHours: 'Mo-Su 00:00-24:00',
+  priceRange: '$$',
+  areaServed: emirates.map((name) => ({ '@type': 'City', name })),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Equipment Rental Catalogue',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Mobile Crane Rental' } },
+      {
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: 'Man Crane / Boom Lift Rental' },
+      },
+    ],
+  },
+};
+---
+
+<BaseLayout
+  title="Crane & Man-Crane Rentals in Dubai & Sharjah"
+  description={site.description}
+  schema={schema}
+>
+  <Hero
+    image={heroImage}
+    title="Heavy Machinery. Cranes & Aerial Work Platforms in the UAE."
+    subtitle="Premium crane and man-crane rentals for construction, industrial and oil & gas projects — delivered fast, operated safely, available around the clock."
+  />
+
+  <StatsBar />
+
+  <section class="section">
+    <div class="container-content">
+      <div class="home-fleet__head">
+        <div>
+          <span class="eyebrow">Our Fleet</span>
+          <h2 class="home-fleet__title">Equipment ready for your next lift</h2>
+        </div>
+        <a href="/fleet" class="btn btn--secondary">View Full Fleet</a>
+      </div>
+      <FleetGrid items={featured} showFilters={false} />
+    </div>
+  </section>
+
+  <Features />
+  <Testimonials />
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .home-fleet__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-block-end: var(--space-12);
+  }
+
+  .home-fleet__title {
+    margin-block-start: var(--space-3);
+    font-size: var(--text-4xl);
+  }
+</style>

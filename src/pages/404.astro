@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { contact } from '@data/site';
+---
+
+<BaseLayout title="Page Not Found" noindex={true}>
+  <section class="notfound">
+    <div class="container-content notfound__inner">
+      <span class="notfound__code">404</span>
+      <h1 class="notfound__title">This page took a different route</h1>
+      <p class="notfound__text">
+        The page you're looking for doesn't exist or has moved. Let's get you back on track.
+      </p>
+      <div class="notfound__actions">
+        <a href="/" class="btn btn--primary">Back to Home</a>
+        <a href="/fleet" class="btn btn--secondary">Browse the Fleet</a>
+      </div>
+      <p class="notfound__help">
+        Need help now? Call <a href={`tel:${contact.phoneE164}`}>{contact.phoneDisplay}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    min-block-size: 80vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding-block: calc(72px + var(--space-16)) var(--space-16);
+  }
+
+  .notfound__code {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(4rem, 16vw, 9rem);
+    color: var(--accent-primary);
+    line-height: 1;
+  }
+
+  .notfound__title {
+    margin-block: var(--space-4);
+    font-size: var(--text-3xl);
+  }
+
+  .notfound__text {
+    max-inline-size: 46ch;
+    margin-inline: auto;
+    color: var(--text-secondary);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: center;
+    margin-block: var(--space-8) var(--space-6);
+  }
+
+  .notfound__help a {
+    color: var(--accent-primary-hover);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  name: string;
+  category: 'crane' | 'man-crane';
+  image: ImageMetadata;
+  maxLoad?: string;
+  maxHeight?: string;
+  availability: 'available' | 'limited' | 'contact';
+  slug: string;
+  featured?: boolean;
+}
+
+const {
+  name,
+  category,
+  image,
+  maxLoad,
+  maxHeight,
+  availability,
+  slug,
+  featured = false,
+} = Astro.props;
+
+const availabilityLabel = {
+  available: 'Available',
+  limited: 'Limited',
+  contact: 'Enquire',
+} as const;
+
+const detailHref = `/fleet/${slug}`;
+---
+
+<article
+  class:list={['fleet-card', { 'fleet-card--featured': featured }]}
+  data-category={category}
+  data-availability={availability}
+>
+  <a href={detailHref} class="fleet-card__media" tabindex="-1" aria-hidden="true">
+    <Image
+      src={image}
+      alt={`${name} available for rent in the UAE`}
+      widths={[400, 600, 900]}
+      sizes="(max-width: 48rem) 100vw, 33vw"
+      loading="lazy"
+      decoding="async"
+      class="fleet-card__image"
+    />
+    <span class:list={['badge', `badge--${availability}`, 'fleet-card__badge']}>
+      {availabilityLabel[availability]}
+    </span>
+  </a>
+
+  <div class="fleet-card__body">
+    <h3 class="fleet-card__name">
+      <a href={detailHref}>{name}</a>
+    </h3>
+    <dl class="fleet-card__specs">
+      {
+        maxLoad && (
+          <div>
+            <dt>⬆ Max Load</dt>
+            <dd>{maxLoad}</dd>
+          </div>
+        )
+      }
+      {
+        maxHeight && (
+          <div>
+            <dt>📐 Max Height</dt>
+            <dd>{maxHeight}</dd>
+          </div>
+        )
+      }
+    </dl>
+    <a href={detailHref} class="fleet-card__link">
+      View Details
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>
+
+<style>
+  .fleet-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
+  }
+
+  .fleet-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-accent);
+  }
+
+  .fleet-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .fleet-card__image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .fleet-card:hover .fleet-card__image {
+    transform: scale(1.05);
+  }
+
+  .fleet-card__badge {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-end: var(--space-3);
+    backdrop-filter: blur(4px);
+  }
+
+  .fleet-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    flex: 1;
+  }
+
+  .fleet-card__name {
+    font-size: var(--text-xl);
+  }
+
+  .fleet-card__name a:hover {
+    color: var(--accent-primary-hover);
+  }
+
+  .fleet-card__specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0;
+  }
+
+  .fleet-card__specs div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fleet-card__specs dt {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .fleet-card__specs dd {
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .fleet-card__link {
+    margin-block-start: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--accent-primary-hover);
+  }
+
+  .fleet-card__link:hover {
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 64rem) {
+    .fleet-card--featured {
+      grid-column: span 2;
+      flex-direction: row;
+    }
+    .fleet-card--featured .fleet-card__media {
+      aspect-ratio: auto;
+      inline-size: 55%;
+    }
+    .fleet-card--featured .fleet-card__body {
+      justify-content: center;
+    }
+  }
+</style>
