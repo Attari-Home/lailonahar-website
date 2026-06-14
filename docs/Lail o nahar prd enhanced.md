@@ -30,7 +30,7 @@
 ### 1.1 Business Context
 
 **Client:** Lail O Nahar Machinery Rentals
-**Market:** UAE — Dubai, Sharjah, Ajman, Abu Dhabi
+**Market:** UAE — Dubai, Sharjah, Ajman, Abu Dhabi, Al Ain, Fujairah, Ras Al Khaimah, Umm Al Quwain
 **Primary Goal:** Generate high-quality B2B leads for crane and man-crane rentals
 **Secondary Goal:** Establish brand credibility against established UAE competitors
 
@@ -405,7 +405,7 @@ Two modes (config-driven):
 │   │                                         │              │
 │   │  [🟡 Get a Free Quote]  [📋 View Fleet] │              │
 │   │                                         │              │
-│   │  Serving Dubai • Sharjah • Ajman • AD   │              │
+│   │  Serving Dubai • Sharjah • Ajman • Abu Dhabi • Al Ain • Fujairah • Ras Al Khaimah • Umm Al Quwain   │              │
 │   └─────────────────────────────────────────┘              │
 │                                                             │
 │  ▼  Scroll indicator (animated chevron)                     │
@@ -513,7 +513,7 @@ Displayed between Hero and Fleet sections.
 - Company Name*
 - Phone (UAE format: +971 XX XXX XXXX)*
 - Email
-- Emirates (select: Dubai / Sharjah / Ajman / Abu Dhabi / Other)*
+- Emirates (select: Dubai / Sharjah / Ajman / Abu Dhabi / Al Ain / Fujairah / Ras Al Khaimah / Umm Al Quwain)*
 - Equipment Needed (multi-select: Crane / Man-Crane / Not Sure)*
 - Project Duration (select: Daily / Weekly / Monthly / Long-term)
 - Message / Notes
@@ -737,7 +737,7 @@ specs:
 availability: available
 featured: true
 sortOrder: 1
-description: "Rent a 50 Ton Mobile Crane in UAE. Available 24/7 across Dubai, Sharjah, and Ajman for construction and industrial projects."
+description: "Rent a 50 Ton Mobile Crane in UAE. Available 24/7 across Dubai, Sharjah, Ajman, Abu Dhabi, Al Ain, Fujairah, Ras Al Khaimah, Umm Al Quwain for construction and industrial projects."
 useCases: ["construction", "oil & gas", "port operations"]
 ---
 
@@ -757,7 +757,7 @@ Every page MUST include:
 <title>Crane Rentals in Dubai & Sharjah | Lail O Nahar Machinery</title>
 
 <!-- Meta description: 150-160 chars, includes location + CTA -->
-<meta name="description" content="Rent cranes and man-cranes across UAE. 24/7 service in Dubai, Sharjah, Ajman & Abu Dhabi. Get a free quote from Lail O Nahar Machinery Rentals today." />
+<meta name="description" content="Rent cranes and man-cranes across UAE. 24/7 service in Dubai, Sharjah, Ajman, Abu Dhabi, Al Ain, Fujairah, Ras Al Khaimah, Umm Al Quwain. Get a free quote from Lail O Nahar Machinery Rentals today." />
 
 <!-- Canonical -->
 <link rel="canonical" href="https://lail-o-nahar.pages.dev/fleet/cranes" />
@@ -793,7 +793,11 @@ Every page MUST include:
     { "@type": "City", "name": "Dubai" },
     { "@type": "City", "name": "Sharjah" },
     { "@type": "City", "name": "Ajman" },
-    { "@type": "City", "name": "Abu Dhabi" }
+    { "@type": "City", "name": "Abu Dhabi" },
+    { "@type": "City", "name": "Al Ain" },
+    { "@type": "City", "name": "Fujairah" },
+    { "@type": "City", "name": "Ras Al Khaimah" },
+    { "@type": "City", "name": "Umm Al Quwain" }
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",

@@ -1,7 +1,7 @@
 # Lail O Nahar Machinery Rentals 🏗️
 
 A modern, ultra-fast static website for **Lail O Nahar Machinery Rentals** — a heavy equipment and
-man-crane rental service operating across the UAE (Dubai, Sharjah, Ajman, Abu Dhabi).
+man-crane rental service operating across the UAE (Dubai, Sharjah, Ajman, Abu Dhabi, Al Ain, Fujairah, Ras Al Khaimah, Umm Al Quwain).
 
 Engineered for **maximum local SEO performance** and lead generation. It delivers the smooth,
 page-less feel of an SPA without the heavy JavaScript payload, targeting perfect Core Web Vitals.

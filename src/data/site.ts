@@ -9,17 +9,17 @@ export const site = {
     nameAr: 'ليل و نهار',
     url: 'https://lail-o-nahar.pages.dev',
     description:
-        'Rent cranes and man-cranes across the UAE. 24/7 service in Dubai, Sharjah, Ajman & Abu Dhabi. Get a free quote from Lail O Nahar Machinery Rentals today.',
+        'Rent cranes and man-cranes across the UAE. 24/7 service in Dubai, Sharjah, Ajman, Abu Dhabi, Al Ain, Fujairah, Ras Al Khaimah, Umm Al Quwain. Get a free quote from Lail O Nahar Machinery Rentals today.',
     locale: 'en_AE',
     defaultOgImage: '/og/og-default.jpg',
 } as const;
 
 export const contact = {
     // Replace with the real business number (digits only for wa.me / formatted for display).
-    phoneDisplay: '+971 50 123 4567',
-    phoneE164: '+971501234567',
-    whatsapp: '971501234567',
-    email: 'sales@lailonahar.ae',
+    phoneDisplay: '+971 50 214 9805',
+    phoneE164: '+971502149805',
+    whatsapp: '971502149805',
+    email: 'liaqatabbas453@gmail.com, shoukatabbas4845@gmail.com',
     addressLine: 'Industrial Area, Sharjah, United Arab Emirates',
     // Latitude/longitude placeholder for the contact map.
     mapQuery: 'Sharjah Industrial Area, UAE',
@@ -32,7 +32,7 @@ export const social = {
     linkedin: 'https://linkedin.com/',
 } as const;
 
-export const emirates = ['Dubai', 'Sharjah', 'Ajman', 'Abu Dhabi'] as const;
+export const emirates = ['Dubai', 'Sharjah', 'Ajman', 'Abu Dhabi', 'Al Ain', 'Fujairah', 'Ras Al Khaimah', 'Umm Al Quwain'] as const;
 
 export const navLinks = [
     { label: 'Home', href: '/' },
