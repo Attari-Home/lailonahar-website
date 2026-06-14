@@ -18,6 +18,8 @@ export interface Props {
   lang?: string;
   dir?: 'ltr' | 'rtl';
   hideWhatsApp?: boolean;
+  /** Render the header transparent over a full-bleed hero (home page). */
+  transparentHeader?: boolean;
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   lang = 'en',
   dir = 'ltr',
   hideWhatsApp = false,
+  transparentHeader = false,
 } = Astro.props;
 
 const cfBeacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
@@ -91,7 +94,7 @@ const cfBeacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <ProgressBar />
-    <Header />
+    <Header transparentHeader={transparentHeader} />
 
     <main id="main-content">
       <slot />
@@ -109,12 +112,20 @@ const cfBeacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
     {/* Theme toggle handler — re-bound after each view transition */}
     <script>
       const KEY = 'lon-theme';
-      function applyTheme(theme: string) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem(KEY, theme);
+      function resolveTheme() {
+        const saved = localStorage.getItem(KEY);
+        if (saved === 'dark' || saved === 'light') return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      function syncToggleLabels(theme: string) {
         document.querySelectorAll('#theme-toggle').forEach((btn) => {
           btn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
         });
+      }
+      function applyTheme(theme: string) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(KEY, theme);
+        syncToggleLabels(theme);
       }
       function toggleTheme() {
         const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -125,6 +136,16 @@ const cfBeacon = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
         const target = e.target as HTMLElement;
         if (target.closest('#theme-toggle')) toggleTheme();
       });
+      // View transitions swap the <html> element, resetting data-theme to the
+      // page's static default. Re-apply the saved theme before the new page paints
+      // (after-swap) and on every page-load so dark mode persists across navigation.
+      const reapply = () => {
+        const theme = resolveTheme();
+        document.documentElement.setAttribute('data-theme', theme);
+        syncToggleLabels(theme);
+      };
+      document.addEventListener('astro:after-swap', reapply);
+      document.addEventListener('astro:page-load', reapply);
       // React to OS preference changes when the user hasn't chosen explicitly.
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
         if (!localStorage.getItem(KEY)) {

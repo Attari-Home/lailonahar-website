@@ -1,55 +1,51 @@
 ---
 import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import { contact, emirates } from '@data/site';
+import type { HeroSlide } from '@lib/media';
 
 interface Props {
-  image: ImageMetadata;
-  video?: string; // optional path under /public, e.g. "/videos/crane-hero.mp4"
-  videoWebm?: string;
+  slides: HeroSlide[];
   eyebrow?: string;
   title: string;
   subtitle?: string;
 }
 
-const {
-  image,
-  video,
-  videoWebm,
-  eyebrow = 'Heavy Lifting, Done Right',
-  title,
-  subtitle,
-} = Astro.props;
+const { slides, eyebrow = 'Heavy Lifting, Done Right', title, subtitle } = Astro.props;
+
+const hasSlideshow = slides.length > 1;
 ---
 
-<section class="hero">
+<section class="hero" data-hero>
   <div class="hero__media">
-    {
-      video ? (
-        <video
-          class="hero__video"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="none"
-          poster={image.src}
-        >
-          {videoWebm && <source src={videoWebm} type="video/webm" />}
-          <source src={video} type="video/mp4" />
-        </video>
-      ) : (
-        <Image
-          src={image}
-          alt="Lail O Nahar crane fleet operating across the UAE"
-          widths={[768, 1280, 1920]}
-          sizes="100vw"
-          loading="eager"
-          fetchpriority="high"
-          class="hero__image"
-        />
-      )
-    }
+    <div class="hero__slides">
+      {
+        slides.map((slide, i) => (
+          <div class:list={['hero__slide', { 'is-active': i === 0 }]} data-slide>
+            {slide.type === 'image' ? (
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                widths={[768, 1280, 1920]}
+                sizes="100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                class="hero__image"
+              />
+            ) : (
+              <video
+                class="hero__video"
+                muted
+                playsinline
+                preload={i === 0 ? 'auto' : 'none'}
+                data-video
+              >
+                <source src={slide.src} type="video/mp4" />
+              </video>
+            )}
+          </div>
+        ))
+      }
+    </div>
     <div class="hero__overlay"></div>
   </div>
 
@@ -77,19 +73,130 @@ const {
     </a>
   </div>
 
+  {
+    hasSlideshow && (
+      <div class="hero__dots" data-hero-dots role="tablist" aria-label="Hero slides">
+        {slides.map((_, i) => (
+          <button
+            type="button"
+            class:list={['hero__dot', { 'is-active': i === 0 }]}
+            data-dot
+            data-index={i}
+            aria-label={`Show slide ${i + 1}`}
+          />
+        ))}
+      </div>
+    )
+  }
+
   <a href="#trust" class="hero__scroll" aria-label="Scroll to content">
-    <svg
-      viewBox="0 0 24 24"
-      width="28"
-      height="28"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-    >
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M6 9l6 6 6-6"></path>
     </svg>
   </a>
 </section>
+
+<script>
+  function initHero() {
+    const hero = document.querySelector('[data-hero]');
+    if (!hero) return;
+
+    const slides = Array.from(hero.querySelectorAll<HTMLElement>('[data-slide]'));
+    const dots = Array.from(hero.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    if (slides.length === 0) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const IMAGE_MS = 6000;
+
+    // Single slide: just play the lone video on loop, nothing to cycle.
+    if (slides.length === 1) {
+      const onlyVideo = slides[0].querySelector('video');
+      if (onlyVideo) {
+        onlyVideo.loop = true;
+        onlyVideo.play?.().catch(() => {});
+      }
+      return;
+    }
+
+    let current = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const clearTimer = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = undefined;
+      }
+    };
+    const scheduleNext = (ms: number) => {
+      clearTimer();
+      timer = setTimeout(() => go(current + 1), ms);
+    };
+    const stopVideo = (slide: HTMLElement) => {
+      const v = slide.querySelector('video');
+      if (v) {
+        v.pause();
+        v.onended = null;
+        try {
+          v.currentTime = 0;
+        } catch {
+          /* metadata not ready — ignore */
+        }
+      }
+    };
+
+    function activate(slide: HTMLElement) {
+      clearTimer();
+      const video = slide.querySelector('video');
+      if (video) {
+        try {
+          video.currentTime = 0;
+        } catch {
+          /* ignore */
+        }
+        video.onended = () => go(current + 1);
+        if (!reduceMotion) {
+          const p = video.play();
+          if (p) p.catch(() => scheduleNext(IMAGE_MS));
+        }
+        // Safety net if the video stalls or can't autoplay.
+        if (reduceMotion) scheduleNext(IMAGE_MS);
+      } else if (!reduceMotion) {
+        scheduleNext(IMAGE_MS);
+      }
+    }
+
+    function go(next: number) {
+      const target = ((next % slides.length) + slides.length) % slides.length;
+      if (target === current) return;
+      const prev = slides[current];
+      stopVideo(prev);
+      prev.classList.remove('is-active');
+      dots[current]?.classList.remove('is-active');
+
+      current = target;
+      const slide = slides[current];
+      slide.classList.add('is-active');
+      dots[current]?.classList.add('is-active');
+      activate(slide);
+    }
+
+    dots.forEach((dot) =>
+      dot.addEventListener('click', () => go(Number(dot.dataset.index)))
+    );
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearTimer();
+      } else if (!slides[current].querySelector('video') && !reduceMotion) {
+        scheduleNext(IMAGE_MS);
+      }
+    });
+
+    activate(slides[current]);
+  }
+
+  document.addEventListener('astro:page-load', initHero);
+</script>
 
 <style>
   .hero {
@@ -105,6 +212,22 @@ const {
     position: absolute;
     inset: 0;
     z-index: -2;
+  }
+
+  .hero__slides {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  .hero__slide.is-active {
+    opacity: 1;
   }
 
   .hero__image,
@@ -194,6 +317,40 @@ const {
     display: none;
   }
 
+  .hero__dots {
+    position: absolute;
+    inset-block-end: var(--space-6);
+    inset-inline-end: var(--space-8);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .hero__dot {
+    inline-size: 10px;
+    block-size: 10px;
+    padding: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      inline-size var(--transition-base),
+      background var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .hero__dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .hero__dot.is-active {
+    inline-size: 26px;
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+
   .hero__scroll {
     position: absolute;
     inset-block-end: var(--space-6);
@@ -212,4 +369,12 @@ const {
       transform: translateX(-50%) translateY(8px);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide {
+      transition: none;
+    }
+  }
 </style>
+</content>
+</invoke>

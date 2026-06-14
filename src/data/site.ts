@@ -37,6 +37,7 @@ export const emirates = ['Dubai', 'Sharjah', 'Ajman', 'Abu Dhabi'] as const;
 export const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Fleet', href: '/fleet' },
+    { label: 'Gallery', href: '/gallery' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
 ] as const;

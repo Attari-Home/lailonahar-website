@@ -7,8 +7,10 @@ import FleetGrid from '@components/FleetGrid/FleetGrid.astro';
 import Features from '@components/Features/Features.astro';
 import Testimonials from '@components/Testimonials/Testimonials.astro';
 import CtaBand from '@components/CtaBand/CtaBand.astro';
-import heroImage from '@assets/hero/hero.jpg';
+import { getHeroSlides } from '@lib/media';
 import { site, contact, emirates } from '@data/site';
+
+const heroSlides = getHeroSlides();
 
 const equipment = await getCollection('equipment');
 const featured = equipment
@@ -45,9 +47,10 @@ const schema = {
   title="Crane & Man-Crane Rentals in Dubai & Sharjah"
   description={site.description}
   schema={schema}
+  transparentHeader
 >
   <Hero
-    image={heroImage}
+    slides={heroSlides}
     title="Heavy Machinery. Cranes & Aerial Work Platforms in the UAE."
     subtitle="Premium crane and man-crane rentals for construction, industrial and oil & gas projects — delivered fast, operated safely, available around the clock."
   />

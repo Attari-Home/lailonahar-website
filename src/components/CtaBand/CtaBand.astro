@@ -32,7 +32,14 @@ const {
 
 <style>
   .cta-band {
-    background: var(--accent-secondary);
+    /* Fixed dark band in both themes — the title/text are always white, so it must
+       not follow --accent-secondary (which flips to near-white in dark mode). */
+    background: #1a1a1a;
+    border-block-start: 3px solid var(--accent-primary);
+  }
+
+  :global([data-theme='dark']) .cta-band {
+    background: var(--bg-elevated);
   }
 
   .cta-band__inner {

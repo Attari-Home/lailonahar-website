@@ -1,0 +1,400 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/PageHeader/PageHeader.astro';
+import CtaBand from '@components/CtaBand/CtaBand.astro';
+import { getGalleryImages, getGalleryVideos } from '@lib/media';
+
+const images = getGalleryImages();
+const videos = getGalleryVideos();
+
+// Pre-generate a large variant per image for the lightbox view.
+const fullImages = await Promise.all(
+  images.map((img) => getImage({ src: img, width: 1600, format: 'webp' }))
+);
+
+const imageCount = images.length;
+const videoCount = videos.length;
+---
+
+<BaseLayout
+  title="Gallery — Cranes & Man-Cranes in Action"
+  description="Browse photos and videos of the Lail O Nahar fleet — mobile cranes, man-cranes and aerial work platforms working on real projects across the UAE."
+>
+  <PageHeader
+    eyebrow="Gallery"
+    title="Our fleet in action"
+    text="Real photos and videos from cranes, man-cranes and aerial work platforms on UAE projects. Tap any item to view it full-size."
+  />
+
+  <section class="section">
+    <div class="container-content">
+      <div class="gallery__tabs" role="tablist" aria-label="Filter gallery">
+        <button class="gallery__tab is-active" data-filter="all" role="tab" aria-selected="true">
+          All <span class="gallery__count">{imageCount + videoCount}</span>
+        </button>
+        <button class="gallery__tab" data-filter="image" role="tab" aria-selected="false">
+          Photos <span class="gallery__count">{imageCount}</span>
+        </button>
+        <button class="gallery__tab" data-filter="video" role="tab" aria-selected="false">
+          Videos <span class="gallery__count">{videoCount}</span>
+        </button>
+      </div>
+
+      <div class="gallery__grid" data-gallery>
+        {
+          images.map((img, i) => (
+            <button
+              type="button"
+              class="gallery__item"
+              data-type="image"
+              data-full={fullImages[i].src}
+              aria-label="View photo full-size"
+            >
+              <Image
+                src={img}
+                alt="Lail O Nahar equipment on a UAE project"
+                widths={[300, 600]}
+                sizes="(max-width: 48rem) 45vw, (max-width: 80rem) 30vw, 22vw"
+                loading="lazy"
+                class="gallery__media"
+              />
+            </button>
+          ))
+        }
+        {
+          videos.map((src) => (
+            <button
+              type="button"
+              class="gallery__item gallery__item--video"
+              data-type="video"
+              data-full={src}
+              aria-label="Play video"
+            >
+              <video class="gallery__media" preload="metadata" muted playsinline tabindex="-1">
+                <source src={`${src}#t=0.5`} type="video/mp4" />
+              </video>
+              <span class="gallery__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        imageCount + videoCount === 0 && (
+          <p class="gallery__empty">
+            No media yet. Drop images into <code>src/assets/gallery/</code> and videos into{' '}
+            <code>public/videos/</code> and they'll appear here automatically.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBand />
+
+  <!-- Lightbox -->
+  <div class="lightbox" data-lightbox hidden aria-hidden="true">
+    <div class="lightbox__backdrop" data-lightbox-close></div>
+    <button class="lightbox__btn lightbox__close" data-lightbox-close aria-label="Close">✕</button>
+    <button class="lightbox__btn lightbox__prev" data-lightbox-prev aria-label="Previous"
+      >‹</button
+    >
+    <button class="lightbox__btn lightbox__next" data-lightbox-next aria-label="Next">›</button>
+    <div class="lightbox__stage" data-lightbox-stage></div>
+  </div>
+</BaseLayout>
+
+<script>
+  function initGallery() {
+    const grid = document.querySelector<HTMLElement>('[data-gallery]');
+    const lightbox = document.querySelector<HTMLElement>('[data-lightbox]');
+    if (!grid || !lightbox) return;
+    // Capture the narrowed (non-null) reference so the nested closures keep the type.
+    const box = lightbox;
+
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    const items = Array.from(grid.querySelectorAll<HTMLButtonElement>('.gallery__item'));
+    const stage = box.querySelector<HTMLElement>('[data-lightbox-stage]')!;
+
+    let filter = 'all';
+    let activeIndex = -1;
+
+    const visibleItems = () =>
+      items.filter((el) => filter === 'all' || el.dataset.type === filter);
+
+    // --- Filtering ---
+    function applyFilter(next: string) {
+      filter = next;
+      tabs.forEach((t) => {
+        const on = t.dataset.filter === next;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      items.forEach((el) => {
+        el.hidden = !(filter === 'all' || el.dataset.type === filter);
+      });
+    }
+    tabs.forEach((t) => t.addEventListener('click', () => applyFilter(t.dataset.filter || 'all')));
+
+    // --- Lightbox ---
+    function render(item: HTMLButtonElement) {
+      const type = item.dataset.type;
+      const full = item.dataset.full || '';
+      stage.innerHTML = '';
+      if (type === 'video') {
+        const video = document.createElement('video');
+        video.src = full;
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.className = 'lightbox__media';
+        stage.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = full;
+        img.alt = 'Lail O Nahar equipment on a UAE project';
+        img.className = 'lightbox__media';
+        stage.appendChild(img);
+      }
+    }
+
+    function openAt(item: HTMLButtonElement) {
+      const list = visibleItems();
+      activeIndex = list.indexOf(item);
+      if (activeIndex < 0) return;
+      render(item);
+      box.hidden = false;
+      box.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      box.hidden = true;
+      box.setAttribute('aria-hidden', 'true');
+      stage.innerHTML = '';
+      document.body.style.overflow = '';
+      activeIndex = -1;
+    }
+
+    function step(delta: number) {
+      const list = visibleItems();
+      if (list.length === 0) return;
+      activeIndex = (activeIndex + delta + list.length) % list.length;
+      render(list[activeIndex]);
+    }
+
+    items.forEach((item) => item.addEventListener('click', () => openAt(item)));
+    box.querySelectorAll('[data-lightbox-close]').forEach((el) =>
+      el.addEventListener('click', close)
+    );
+    box.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => step(-1));
+    box.querySelector('[data-lightbox-next]')?.addEventListener('click', () => step(1));
+
+    document.addEventListener('keydown', (e) => {
+      if (box.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') step(-1);
+      else if (e.key === 'ArrowRight') step(1);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initGallery);
+</script>
+
+<style>
+  .gallery__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+  }
+
+  .gallery__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .gallery__tab:hover {
+    border-color: var(--accent-primary);
+  }
+
+  .gallery__tab.is-active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--text-on-accent);
+  }
+
+  .gallery__count {
+    font-size: var(--text-xs);
+    opacity: 0.7;
+  }
+
+  .gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .gallery__item {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    isolation: isolate;
+  }
+
+  .gallery__media {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+  }
+
+  .gallery__item:hover .gallery__media {
+    transform: scale(1.06);
+  }
+
+  .gallery__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    inline-size: 52px;
+    block-size: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    pointer-events: none;
+    transition: background var(--transition-fast);
+  }
+
+  .gallery__item--video:hover .gallery__play {
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+  }
+
+  .gallery__empty {
+    padding-block: var(--space-12);
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  /* --- Lightbox --- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(4px);
+  }
+
+  .lightbox__stage {
+    position: relative;
+    z-index: 1;
+    max-inline-size: min(92vw, 1400px);
+    max-block-size: 88vh;
+    display: grid;
+    place-items: center;
+  }
+
+  :global(.lightbox__media) {
+    max-inline-size: min(92vw, 1400px);
+    max-block-size: 88vh;
+    inline-size: auto;
+    block-size: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .lightbox__btn {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    inline-size: 48px;
+    block-size: 48px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: var(--text-2xl);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .lightbox__btn:hover {
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+  }
+
+  .lightbox__close {
+    inset-block-start: var(--space-4);
+    inset-inline-end: var(--space-4);
+    font-size: var(--text-xl);
+  }
+
+  .lightbox__prev {
+    inset-inline-start: var(--space-4);
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+  }
+
+  .lightbox__next {
+    inset-inline-end: var(--space-4);
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+  }
+
+  .lightbox__prev:hover {
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .lightbox__next:hover {
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  @media (max-width: 40rem) {
+    .gallery__grid {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+  }
+</style>
+</content>

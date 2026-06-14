@@ -3,6 +3,11 @@ import { navLinks, contact, site } from '@data/site';
 import ThemeToggle from '@components/ThemeToggle/ThemeToggle.astro';
 import Logo from '@components/Logo/Logo.astro';
 
+interface Props {
+  transparentHeader?: boolean;
+}
+const { transparentHeader = false } = Astro.props;
+
 const currentPath = Astro.url.pathname;
 function isActive(href: string) {
   if (href === '/') return currentPath === '/';
@@ -10,7 +15,11 @@ function isActive(href: string) {
 }
 ---
 
-<header class="site-header" data-header transition:persist>
+<header
+  class:list={['site-header', { 'is-overlay': transparentHeader }]}
+  data-header
+  transition:persist
+>
   <div class="container-content site-header__inner">
     <a href="/" class="site-header__brand" aria-label={`${site.name} — home`}>
       <Logo class="site-header__logo" />
@@ -85,6 +94,10 @@ function isActive(href: string) {
     const menu = document.querySelector('[data-mobile-menu]') as HTMLElement | null;
     if (!header) return;
 
+    // The header is persisted across view transitions, so its overlay state must
+    // be re-derived per page: transparent only when a full-bleed hero sits behind it.
+    header.classList.toggle('is-overlay', !!document.querySelector('.hero'));
+
     // Scroll state → glassmorphism
     const onScroll = () => {
       header.classList.toggle('is-scrolled', window.scrollY > 60);
@@ -125,17 +138,23 @@ function isActive(href: string) {
     inset-block-start: 0;
     inset-inline: 0;
     z-index: 100;
+    /* Solid by default so nav text stays readable on every page. */
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
     transition:
       background-color var(--transition-base),
       backdrop-filter var(--transition-base),
       box-shadow var(--transition-base);
   }
 
-  .site-header.is-scrolled {
-    background: var(--bg-nav);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: var(--shadow-md);
+  /* Over a full-bleed hero: transparent at the top, glass once scrolled. */
+  .site-header.is-overlay:not(.is-scrolled) {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
   }
 
   .site-header__inner {
