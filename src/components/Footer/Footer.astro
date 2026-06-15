@@ -48,7 +48,13 @@ const year = new Date().getFullYear();
     <div class="site-footer__col">
       <h2 class="site-footer__heading">Contact</h2>
       <ul>
-        <li><a href={`tel:${contact.phoneE164}`}>{contact.phoneDisplay}</a></li>
+        {
+          contact.phoneNumbers.map((phone) => (
+            <li>
+              <a href={`tel:${phone.e164}`}>{phone.display}</a>
+            </li>
+          ))
+        }
         <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
         <li>{contact.addressLine}</li>
         <li>{contact.hours}</li>
