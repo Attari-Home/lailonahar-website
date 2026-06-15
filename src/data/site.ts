@@ -24,7 +24,7 @@ export const contact = {
     { display: '+971 56 876 6701', e164: '+971568766701' },
   ] as const,
   whatsapp: '971502149805',
-  email: 'liaqatabbas453@gmail.com, shoukatabbas4845@gmail.com',
+  email: 'liaqatabbas453@gmail.com, shaukat4845@gmail.com, attarih63@gmail.com',
   addressLine: 'Industrial Area, Sharjah, United Arab Emirates',
   // Latitude/longitude placeholder for the contact map.
   mapQuery: 'Sharjah Industrial Area, UAE',
