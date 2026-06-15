@@ -13,7 +13,14 @@ import { testimonials } from '@data/site';
       <div class="testimonials__track" data-track>
         {
           testimonials.map((t, i) => (
-            <figure class="testimonials__slide" data-slide aria-hidden={i === 0 ? 'false' : 'true'}>
+            <figure
+              id={`testimonial-slide-${i}`}
+              class="testimonials__slide"
+              data-slide
+              role="tabpanel"
+              aria-label={`Testimonial ${i + 1} of ${testimonials.length}`}
+              aria-hidden={i === 0 ? 'false' : 'true'}
+            >
               <blockquote class="testimonials__quote">“{t.quote}”</blockquote>
               <figcaption class="testimonials__author">
                 <strong>{t.author}</strong>
@@ -40,6 +47,9 @@ import { testimonials } from '@data/site';
                 type="button"
                 class:list={['testimonials__dot', { 'is-active': i === 0 }]}
                 data-dot={i}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`testimonial-slide-${i}`}
                 aria-label={`Go to testimonial ${i + 1}`}
               />
             ))
@@ -71,7 +81,10 @@ import { testimonials } from '@data/site';
       index = (to + slides.length) % slides.length;
       track!.style.transform = `translateX(-${index * 100}%)`;
       slides.forEach((s, i) => s.setAttribute('aria-hidden', i === index ? 'false' : 'true'));
-      dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+      dots.forEach((d, i) => {
+        d.classList.toggle('is-active', i === index);
+        d.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
     }
 
     function start() {
@@ -203,17 +216,27 @@ import { testimonials } from '@data/site';
   }
 
   .testimonials__dot {
-    inline-size: 10px;
-    block-size: 10px;
+    inline-size: 24px;
+    block-size: 24px;
     padding: 0;
-    border-radius: var(--radius-full);
-    background: var(--border-strong);
+    background: transparent;
     border: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .testimonials__dot::before {
+    content: '';
+    inline-size: 10px;
+    block-size: 10px;
+    border-radius: var(--radius-full);
+    background: var(--border-strong);
     transition: background var(--transition-fast);
   }
 
-  .testimonials__dot.is-active {
+  .testimonials__dot.is-active::before {
     background: var(--accent-primary);
   }
 </style>

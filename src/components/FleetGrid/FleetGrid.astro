@@ -36,7 +36,7 @@ const filters = [
 
 <div class="fleet-grid" data-fleet-grid>
   {
-    items.map((item) => (
+    items.map((item, index) => (
       <FleetCard
         name={item.data.name}
         category={item.data.category}
@@ -46,6 +46,8 @@ const filters = [
         availability={item.data.availability}
         slug={item.data.slug}
         featured={item.data.featured}
+        loading={index < 2 ? 'eager' : 'lazy'}
+        fetchpriority={index < 2 ? 'high' : 'auto'}
       />
     ))
   }
